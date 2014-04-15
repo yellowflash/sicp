@@ -86,3 +86,18 @@
   (cond ((= col 1)  1)
 	((= row col) 1)
 	(else (+ (pascal (- row 1) (- col 1)) (pascal (- row 1) col)))))
+
+; Iterative fast exp
+
+(define (even? n)
+  (= (remainder n 2) 0))
+
+(define (square x)
+  (* x x))
+
+(define (fast-exp n x)
+  (define (fast-exp-iter r k s)
+    (cond  ((= k 0) r)
+	   ((even? k) (fast-exp-iter r (/ k 2) (square s)))
+	   (else (fast-exp-iter (* r s) (- k 1) s))))
+  (fast-exp-iter 1 x n))
