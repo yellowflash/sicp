@@ -101,3 +101,42 @@
 	   ((even? k) (fast-exp-iter r (/ k 2) (square s)))
 	   (else (fast-exp-iter (* r s) (- k 1) s))))
   (fast-exp-iter 1 x n))
+
+(define (fast-mult a b)
+  (define (fast-mult-iter r k s)
+    (cond ((= k 0) r)
+	  ((even? k) (fast-mult-iter r (/ k 2) (+ s s)))
+	  (else (fast-mult-iter (+ r s) (- k 1) s))))
+  (fast-mult-iter 0 b a))
+
+
+; Smallest divisor
+; Can increment 2 but lets not bother
+
+(define (smallest-divisor n)
+  (define (smallest-divisor-iter check)
+    (if (> (* check check) n) 
+	n
+	(if (= (remainder n check) 0)
+	    check
+	    (smallest-divisor-iter (+ check 2)))))
+  (if (even? n) 2
+      (smallest-divisor-iter 3)))
+
+;Timed Prime
+
+(define (prime? n)
+  (= (smallest-divisor n) n))
+
+(define (report-prime n time)
+  (display n)
+  (display "****")
+  (display time)
+  (newline))
+
+(define (iter-and-report n start-time x)
+  (if (prime? n)
+      (begin
+       (report-prime n (- (runtime) start-time))
+       (iter-and-report (+ n 1) (runtime) (+ x 1)))
+      (if (< x 4) (iter-and-report (+ n 1) (runtime) x))))
