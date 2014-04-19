@@ -245,4 +245,37 @@
 
 (define golden-ratio (fixed-point (lambda (x) (+ 1 (/ 1.0 x))) 1))
 
-(fixed-point (lambda(x) (/ (+ x (/ (log 1000) (log x))) 2)) 2)
+; Continued Fraction
+(define (K x) (lambda (y) x))
+
+(define (cont-fraction n d k)
+  (define (cont-fraction-recur i)
+    (if (> i k)
+	(/ (n i) (d i))
+	(/ (n i) (+ (d i) (cont-fraction-recur (+ i 1))))))
+  (cont-fraction-recur 1))
+
+(define (cont-fraction-iterative n d k)
+  (define (cont-fraction-iter sofar i)
+    (if (< i 1)
+	sofar
+	(cont-fraction-iter (/ (n i) (+ ( d i) sofar)) (- i 1))))
+  (cont-fraction-iter 0 k))
+
+(define inverse-golden-ratio (cont-fraction-iterative (K 1.0) (K 1.0) 100))
+
+
+; Euler's continued-fraction for e
+
+(define e-minus-2-series (cont-fraction (K 1.0) 
+				(lambda (x) 
+				  (cond ((= x 1) 1)
+					((= x 2) 2)
+					((= (remainder (+ x 1) 3) 0) (* (/ (+ x 1) 3) 2))
+					(else 1))) 100))
+
+; Lambert's tangent function
+
+(define (tan-lambert d)
+  (cont-fraction (lambda (x) (if (= x 1) d (- (* d d)))) (lambda (x) (- (* x 2) 1)) 100))
+					
