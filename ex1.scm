@@ -140,3 +140,18 @@
        (report-prime n (- (runtime) start-time))
        (iter-and-report (+ n 1) (runtime) (+ x 1)))
       (if (< x 4) (iter-and-report (+ n 1) (runtime) x))))
+
+;Carmichael Numbers
+
+(define (exp-mod x n m)
+  (cond ((= n 1) x)
+	((even? n) (remainder (square (exp-mod x (/ n 2) m)) m))
+	(else (remainder (* x (exp-mod x (- n 1) m)) m))))
+
+(define (carmichael? n)
+  (define (carmichael-iter i)
+    (cond ((= i n)  true)
+	  ((= i (exp-mod i n n)) (carmichael-iter (+ i 1)))
+	  (else false)))
+  (and (not (prime? n)) (carmichael-iter 2)))
+	
