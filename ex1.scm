@@ -171,3 +171,16 @@
 
 (define (sum-squares start end)
   (sum-series-iterative start square end inc))
+
+;Product of a series
+
+(define (identity a) a)
+
+(define (product-series a term b next)
+  (define (product-series-iter p c)
+    (if (> c b) p
+	(product-series-iter (* p (term c)) (next c))))
+  (product-series-iter 1 a))
+
+(define (factorial n)
+  (product-series 1 identity n inc))
