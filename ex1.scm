@@ -170,7 +170,7 @@
   (sum-series-iter 0 a))
 
 (define (sum-squares start end)
-  (sum-series-iterative start square end inc))
+  (sum-series start square end inc))
 
 ;Product of a series
 
@@ -182,5 +182,53 @@
 	(product-series-iter (* p (term c)) (next c))))
   (product-series-iter 1 a))
 
+
+(define (product-series-recur a term b next)
+  (if (> a b) 1
+      (* (term a) (product-series-recur (next a) term b next))))
+
 (define (factorial n)
   (product-series 1 identity n inc))
+
+; John Wallis Sequence
+(define (pi-series)
+  (define (term a)
+    (/ (- a (remainder a 2.0)) (- a (abs (- (remainder a 2.0) 1.0)))))
+  (* (product-series 3.0 term 10000.0 inc) 4))
+
+
+; Accumulate
+
+(define (accumulate combiner null-val a term b next)
+  (define (accumulate-iter curr sofar)
+    (if (> curr b) sofar
+	(accumulate-iter (next curr) (combiner (term curr) sofar))))
+  (accumulate-iter a null-val))
+
+(define (accumulate-recur combiner null-val a term b next)
+  (if (> a b) null-val
+      (combiner (accumulate-recur combiner null-val (next a) term b next) (term a))))
+
+(define (sum-series-with-accumulate a term b next)
+  (accumulate + 0 a term b next))
+
+(define (product-series-with-accumulate a term b next)
+  (accumulate * 1 a term b next))
+
+
+; Filtered Accumulate
+
+(define (filtered-accumulate filter combiner null-val a term b next)
+  (define (filtered-accumulate-iter curr sofar)
+    (if  (> curr b) sofar
+	 (filtered-accumulate-iter (next curr) (if (filter curr) (combiner curr sofar) sofar))))
+  (filtered-accumulate-iter a null-val))
+
+(define (sum-of-primes start end)
+  (filtered-accumulate prime? + 0 start identity end inc))
+
+
+(define (product-of-rel-primes n)
+  (define (relative-prime? a)
+    (= (gcd a n) 1))
+  (filtered-accumulate relative-prime? * 1 start identity end inc))
