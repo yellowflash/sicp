@@ -155,3 +155,19 @@
 	  (else false)))
   (and (not (prime? n)) (carmichael-iter 2)))
 	
+
+;Sum of a series
+(define (inc a) (+ a 1))
+
+(define (sum-series a term b next)
+  (if (> a b) 0
+      (+ (term a) (sum-series (next a) term b next))))
+
+(define (sum-series-iterative a term b next)
+  (define (sum-series-iter s c)
+    (if (> c b) s
+	(sum-series-iter (+ s (term c)) (next c))))
+  (sum-series-iter 0 a))
+
+(define (sum-squares start end)
+  (sum-series-iterative start square end inc))
