@@ -232,3 +232,17 @@
   (define (relative-prime? a)
     (= (gcd a n) 1))
   (filtered-accumulate relative-prime? * 1 start identity end inc))
+
+; Fixed Points
+
+(define (close-enough? a b) (< (abs (- a b)) 0.000001))
+
+(define (fixed-point fun guess)
+  (let ((val (fun guess)))
+     (if (close-enough? val guess)
+	 val
+	 (fixed-point fun val))))
+
+(define golden-ratio (fixed-point (lambda (x) (+ 1 (/ 1.0 x))) 1))
+
+(fixed-point (lambda(x) (/ (+ x (/ (log 1000) (log x))) 2)) 2)
